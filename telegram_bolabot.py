@@ -6,6 +6,7 @@ DEBUG = True
 IGNORE_CHANNEL = False
 
 APIKey = #Coloque APIKey aqui
+#teste
 
 bot = telebot.TeleBot(APIKey)
 
