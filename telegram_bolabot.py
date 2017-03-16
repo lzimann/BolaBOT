@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+#Usage: telegram_bolabot.py <auth_key>
+
 import telebot
 import random
+from sys import argv
 
 DEBUG = True
 IGNORE_CHANNEL = False
 
-APIKey = #Coloque APIKey aqui
-#teste
+APIKey = argv[1]
 
 bot = telebot.TeleBot(APIKey)
 
