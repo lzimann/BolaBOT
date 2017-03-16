@@ -7,7 +7,7 @@ import datetime
 
 irc_server = 'irc.rizon.net'
 irc_port = 6667
-irc_channel = ''
+irc_channel = '#qwertychat'
 nick = 'BolaBOT'
 
 def obv(msg):
