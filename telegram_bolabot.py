@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-#Usage: telegram_bolabot.py <auth_key>
 
 import telebot
 import random
-from sys import argv
+import argparse
 
-DEBUG = True
-IGNORE_CHANNEL = False
+parser = argparse.ArgumentParser()
+parser.add_argument("key", help="AUTH Key do telegram bot")
+parser.add_argument("-v", "--verbose", action="store_true", help="Mostra mais informação na tela")
+parser.add_argument("-p", "--private_only", action="store_true", help="Considera apenas mensagens enviadas em conversa privada")
 
-APIKey = argv[1]
+args = parser.parse_args()
 
-bot = telebot.TeleBot(APIKey)
+bot = telebot.TeleBot(args.key)
 
 #Mensagens que começam com alguma dessas strings serão consideradas comandos
 command_strings = '!', '/', '.'
 
 def print_debug(string):
-	if DEBUG:
+	if args.verbose:
 		print string
 		
 def obv(msg):
@@ -25,13 +26,13 @@ def obv(msg):
     return msg + '.'
 		
 @bot.message_handler(content_types=['text'])
-def echo_all(message):
-	print_debug("%s: %s" % (message.from_user.username, message.text))
-	
+def handle_messages(message):
+
 	#Pra não ficar floodando o canal enquanto estivermos testando
-	if (message.chat.type != "private") and IGNORE_CHANNEL:
+	if (message.chat.type != "private") and args.private_only:
 		return
 
+	print_debug("%s: %s" % (message.from_user.username, message.text))
 	command = None
 	texto = message.text
 	for string in command_strings:
