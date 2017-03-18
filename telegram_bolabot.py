@@ -3,6 +3,7 @@
 import telebot
 import random
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("key", help="AUTH Key do telegram bot")
@@ -55,6 +56,10 @@ def handle_messages(message):
 	if command == "bola" or texto.startswith('@' + bot.get_me().username):
 		bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
 	
+	if command == "update" and (message.from_user.username in bot.getChatAdministrators(message.chat.id)):
+		bot.send_message(message.chat.id, "Fazendo update!")
+		os.system("./update.sh")
+		
 		
 
 bot.skip_pending = True
