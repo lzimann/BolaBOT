@@ -47,7 +47,7 @@ def handle_messages(message):
 	admins = bot.get_chat_administrators(message.chat.id)
 	ids = []
 	for chatmember in admins:
-			ids.append(chatmember.id)
+			ids.append(chatmember.user.id)
 
 	if command == "alt":
 		if ':' not in texto:
