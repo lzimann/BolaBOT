@@ -3,7 +3,7 @@
 import telebot
 import random
 import argparse
-from subprocess import call
+import subprocess
 import sys
 
 parser = argparse.ArgumentParser()
@@ -14,9 +14,6 @@ parser.add_argument("-p", "--private_only", action="store_true", help="Considera
 args = parser.parse_args()
 
 bot = telebot.TeleBot(args.key)
-
-bot.skip_pending = True
-bot.polling()
 
 #Mensagens que começam com alguma dessas strings serão consideradas comandos
 command_strings = '!', '/', '.'
@@ -62,8 +59,10 @@ def handle_messages(message):
 	
 	if command == "update" and (message.from_user.username in bot.get_chat_administrators(message.chat.id)):
 		bot.send_message(message.chat.id, "Fazendo update!")
-		bot.polling(block = True)
-		call("git pull origin master")
-		call("python telegram_bolabot.py " + args.key, shell = True)
+		subprocess.call("git pull origin master")
+		subprocess.popen("python telegram_bolabot.py " + args.key)
 		sys.exit()
+
+bot.skip_pending = True
+bot.polling()
 		
