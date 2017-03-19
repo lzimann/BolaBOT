@@ -3,7 +3,8 @@
 import telebot
 import random
 import argparse
-import os
+from subprocess import call
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("key", help="AUTH Key do telegram bot")
@@ -13,6 +14,9 @@ parser.add_argument("-p", "--private_only", action="store_true", help="Considera
 args = parser.parse_args()
 
 bot = telebot.TeleBot(args.key)
+
+bot.skip_pending = True
+bot.polling()
 
 #Mensagens que começam com alguma dessas strings serão consideradas comandos
 command_strings = '!', '/', '.'
@@ -56,11 +60,10 @@ def handle_messages(message):
 	if command == "bola" or texto.startswith('@' + bot.get_me().username):
 		bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
 	
-	if command == "update" and (message.from_user.username in bot.getChatAdministrators(message.chat.id)):
+	if command == "update" and (message.from_user.username in bot.get_chat_administrators(message.chat.id)):
 		bot.send_message(message.chat.id, "Fazendo update!")
-		os.system("./update.sh")
+		bot.polling(block = True)
+		call("git pull origin master")
+		call("python telegram_bolabot.py " + args.key, shell = True)
+		sys.exit()
 		
-		
-
-bot.skip_pending = True
-bot.polling()
