@@ -44,6 +44,10 @@ def handle_messages(message):
 			break
 			
 	print_debug("CMD: %s: %s\n" % (command, texto))
+	admins = bot.get_chat_administrators(message.chat.id)
+	ids = []
+	for chatmember in admins:
+			ids.append(chatmember.id)
 
 	if command == "alt":
 		if ':' not in texto:
@@ -57,10 +61,10 @@ def handle_messages(message):
 	if command == "bola" or texto.startswith('@' + bot.get_me().username):
 		bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
 	
-	if command == "update" and (message.from_user.username in bot.get_chat_administrators(message.chat.id)):
+	if command == "update" and (message.from_user.id in ids):
 		bot.send_message(message.chat.id, "Fazendo update!")
 		subprocess.call("git pull origin master")
-		subprocess.popen("python telegram_bolabot.py " + args.key)
+		subprocess.call("python telegram_bolabot.py " + args.key, shell = True)
 		sys.exit()
 
 bot.skip_pending = True
