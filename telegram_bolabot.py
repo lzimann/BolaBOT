@@ -20,7 +20,7 @@ command_strings = '!', '/', '.'
 
 updating = False #Flag pra quando for updatear
 admins = "Ystah", "Lzimann" #Temporario, será substuido por config.ini depois
-def print_debug(string):
+def print_verbose(string):
 	if args.verbose:
 		print string
 		
@@ -37,7 +37,7 @@ def handle_messages(message):
 	if (message.chat.type != "private") and args.private_only:
 		return
 
-	print_debug("%s: %s" % (message.from_user.username, message.text))
+	print_verbose("%s: %s" % (message.from_user.username, message.text))
 	command = None
 	texto = message.text
 	for string in command_strings:
@@ -46,7 +46,7 @@ def handle_messages(message):
 			texto = ' '.join(message.text.split()[1:])
 			break
 			
-	print_debug("CMD: %s: %s\n" % (command, texto))
+	print_verbose("CMD: %s: %s\n" % (command, texto))
 	
 	if command == "alt":
 		if ':' not in texto:
@@ -68,9 +68,9 @@ def handle_messages(message):
 
 bot.skip_pending = True
 
-print_debug("Iniciando: %s" % sys.argv)
+print_verbose("Iniciando: %s" % sys.argv)
 bot.polling()
 
 if updating:
-	print_debug("Atualizando...")
+	print_verbose("Atualizando...")
 	subprocess.Popen(["python"] + sys.argv)
