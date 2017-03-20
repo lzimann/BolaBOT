@@ -63,7 +63,7 @@ def handle_messages(message):
 	
 	if command == "update" and (message.from_user.id in ids):
 		bot.send_message(message.chat.id, "Fazendo update!")
-		subprocess.call("git pull origin master")
+		subprocess.call("git pull origin master", shell = True)
 		subprocess.call("python telegram_bolabot.py " + args.key, shell = True)
 		sys.exit()
 
