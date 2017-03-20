@@ -18,6 +18,8 @@ bot = telebot.TeleBot(args.key)
 #Mensagens que começam com alguma dessas strings serão consideradas comandos
 command_strings = '!', '/', '.'
 
+updating = False #Flag pra quando for updatear
+admins = "Ystah", "Lzimann" #Temporario, será substuido por config.ini depois
 def print_debug(string):
 	if args.verbose:
 		print string
@@ -29,7 +31,8 @@ def obv(msg):
 		
 @bot.message_handler(content_types=['text'])
 def handle_messages(message):
-
+	global updating
+	
 	#Pra não ficar floodando o canal enquanto estivermos testando
 	if (message.chat.type != "private") and args.private_only:
 		return
@@ -44,11 +47,7 @@ def handle_messages(message):
 			break
 			
 	print_debug("CMD: %s: %s\n" % (command, texto))
-	admins = bot.get_chat_administrators(message.chat.id)
-	ids = []
-	for chatmember in admins:
-			ids.append(chatmember.user.id)
-
+	
 	if command == "alt":
 		if ':' not in texto:
 			msg = texto.strip('?')
@@ -61,12 +60,17 @@ def handle_messages(message):
 	if command == "bola" or texto.startswith('@' + bot.get_me().username):
 		bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
 	
-	if command == "update" and (message.from_user.id in ids):
+	if command == "update" and message.from_user.username in admins:
 		bot.send_message(message.chat.id, "Fazendo update!")
-		subprocess.call("git pull origin master", shell = True)
-		subprocess.call("python telegram_bolabot.py " + args.key, shell = True)
-		sys.exit()
+		subprocess.call("git pull origin master")
+		updating = True
+		bot.stop_polling()
 
 bot.skip_pending = True
+
+print_debug("Iniciando: %s" % sys.argv)
 bot.polling()
-		
+
+if updating:
+	print_debug("Atualizando...")
+	subprocess.Popen(["python"] + sys.argv)
