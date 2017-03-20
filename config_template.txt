@@ -1,0 +1,10 @@
+#Para multiplos valores, separe-os com vírgula sem espaço, ex: admins=Joao,Maria
+
+#AUTHKey pra conectar ao bot, dada pelo @BotFather
+key=
+#Mensagens iniciadas com essas strings serão consideradas comandos
+command_strings=/
+#Usuarios com esses nicknames(sem o @) terão direitos de admin
+admins=
+#Usuarios desejados pro comando !user(API não possui método pra obtê-los automaticamente)
+users=
