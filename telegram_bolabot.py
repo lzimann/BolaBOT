@@ -62,7 +62,7 @@ def handle_messages(message):
 	
 	if command == "update" and message.from_user.username in admins:
 		bot.send_message(message.chat.id, "Fazendo update!")
-		subprocess.call("git pull origin master")
+		subprocess.call("git pull origin master", shell = True)
 		updating = True
 		bot.stop_polling()
 
