@@ -92,17 +92,21 @@ def handle_messages(message):
 		if len(alternativas) > 1:
 			bot.send_message(message.chat.id, obv(random.choice(alternativas).capitalize()))
 	
+	if texto.startswith('@' + bot.get_me().username):
+		command = texto.split()
+		command = command[1].strip()
+		if command == "update" and admin_rights:
+			bot.send_message(message.chat.id, "Fazendo update!")
+			subprocess.call("git pull origin master", shell = True)
+			updating = True
+			bot.stop_polling()
+
 	if command == "bola" or texto.startswith('@' + bot.get_me().username):
 		bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
 	
 	if command == "user" and message.chat.type != "private" and configs["users"] != ['']:
 		bot.send_message(message.chat.id, obv(random.choice(configs["users"])))
-		
-	if command == "update" and admin_rights:
-		bot.send_message(message.chat.id, "Fazendo update!")
-		subprocess.call("git pull origin master", shell = True)
-		updating = True
-		bot.stop_polling()
+
 
 bot.skip_pending = True
 print_verbose("Iniciando: %s" % sys.argv)
