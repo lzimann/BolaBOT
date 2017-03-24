@@ -93,9 +93,7 @@ def handle_messages(message):
 			bot.send_message(message.chat.id, obv(random.choice(alternativas).capitalize()))
 	
 	if texto.startswith('@' + bot.get_me().username):
-		command = texto.split()
-		command = command[1].strip()
-		if command == "update" and admin_rights:
+		if ("update" in texto.split()) and admin_rights:
 			bot.send_message(message.chat.id, "Fazendo update!")
 			subprocess.call("git pull origin master", shell = True)
 			updating = True
