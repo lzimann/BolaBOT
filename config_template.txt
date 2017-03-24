@@ -8,3 +8,5 @@ command_strings=/
 admins=
 #Usuarios desejados pro comando !user(API não possui método pra obtê-los automaticamente)
 users=
+#ID do grupo principal que o bot irá atuar(obtenha falando !eval message.chat.id)
+main_group_id=

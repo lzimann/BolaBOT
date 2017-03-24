@@ -6,6 +6,9 @@ import argparse
 import subprocess
 import sys
 import os
+from hashlib import md5
+
+CONFIG_LIST = "key", "command_strings", "admins", "users", "main_group_id"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--key", help="AUTH Key do telegram bot")
@@ -13,6 +16,11 @@ parser.add_argument("-v", "--verbose", action="store_true", help="Mostra mais in
 parser.add_argument("-p", "--private_only", action="store_true", help="Considera apenas mensagens enviadas em conversa privada")
 
 args = parser.parse_args()
+
+def checksum(file):
+    check = md5()
+    check.update(open(file, 'rb').read())
+    return check.hexdigest()
 
 def print_verbose(string):
 	if args.verbose:
@@ -44,6 +52,10 @@ for line in f.readlines():
 		config_value = line.split('=')[1].split(',')
 		configs[config_key] = config_value
 f.close()
+
+for entry in CONFIG_LIST:
+	if entry not in configs.keys():
+		configs[entry] = ['']
 
 print_verbose("Configs: %s" % (str(configs)))
 
@@ -103,7 +115,8 @@ def handle_messages(message):
 	
 	if command == "user" and message.chat.type != "private" and configs["users"] != ['']:
 		bot.send_message(message.chat.id, obv(random.choice(configs["users"])))
-		
+	
+	#Muito cuidado usando isso, pois praticamente tem acesso infinito
 	if command == "eval" and admin_rights:
 		try:
 			output = "Output: " + str(eval(texto))
@@ -115,6 +128,8 @@ def handle_messages(message):
 
 bot.skip_pending = True
 print_verbose("Iniciando: %s" % sys.argv)
+if (configs["main_group_id"][0] != ['']) and not args.private_only:
+	bot.send_message(int(configs["main_group_id"][0]), "%s online! MD5 atual: %s" % (bot.get_me().username, checksum(sys.argv[0])))
 bot.polling()
 
 if updating:
