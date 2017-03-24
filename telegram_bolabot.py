@@ -92,7 +92,7 @@ def handle_messages(message):
 		if len(alternativas) > 1:
 			bot.send_message(message.chat.id, obv(random.choice(alternativas).capitalize()))
 	
-	if texto.startswith('@' + bot.get_me().username):
+	if texto.startswith('@' + bot.get_me().username) or command == "bola":
 		if ("update" in texto.split()) and admin_rights:
 			bot.send_message(message.chat.id, "Fazendo update!")
 			subprocess.call("git pull origin master", shell = True)
@@ -100,9 +100,6 @@ def handle_messages(message):
 			bot.stop_polling()
 		else:
 			bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
-		
-	if command == "bola":
-		bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
 	
 	if command == "user" and message.chat.type != "private" and configs["users"] != ['']:
 		bot.send_message(message.chat.id, obv(random.choice(configs["users"])))
