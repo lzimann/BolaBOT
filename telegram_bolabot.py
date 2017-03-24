@@ -103,6 +103,14 @@ def handle_messages(message):
 	
 	if command == "user" and message.chat.type != "private" and configs["users"] != ['']:
 		bot.send_message(message.chat.id, obv(random.choice(configs["users"])))
+		
+	if command == "eval" and admin_rights:
+		try:
+			output = "Output: " + str(eval(texto))
+		except Exception as erro:
+			output = "Erro: " + str(erro)
+			
+		bot.send_message(message.chat.id, output)
 
 
 bot.skip_pending = True
