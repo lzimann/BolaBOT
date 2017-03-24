@@ -100,8 +100,10 @@ def handle_messages(message):
 			subprocess.call("git pull origin master", shell = True)
 			updating = True
 			bot.stop_polling()
-
-	if command == "bola" or texto.startswith('@' + bot.get_me().username):
+		else:
+			bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
+		
+	if command == "bola":
 		bot.send_message(message.chat.id, obv(random.choice(("Sim", "Não"))))
 	
 	if command == "user" and message.chat.type != "private" and configs["users"] != ['']:
