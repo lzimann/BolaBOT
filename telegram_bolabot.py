@@ -6,10 +6,12 @@ import argparse
 import subprocess
 import sys
 import os
+import pyowm
 from hashlib import md5
 
 CONFIG_LIST = "key", "command_strings", "admins", "users", "main_group_id"
-
+#Weather API
+global owm
 parser = argparse.ArgumentParser()
 parser.add_argument("--key", help="AUTH Key do telegram bot")
 parser.add_argument("-v", "--verbose", action="store_true", help="Mostra mais informação na tela")
@@ -66,6 +68,33 @@ if configs["key"] == ['']:
 	print "AUTH key não encontrada, por favor insira no config.ini ou por via do comando --key"
 	sys.exit(1)
 
+if configs["weather_api"]:
+	owm = pyowm.OWM(configs["weather_api"][0])
+
+def get_weather(location):
+	if not location or not owm:
+		return
+	observation = owm.weather_at_place(location)
+	w = observation.get_weather()
+	l = observation.get_location()
+
+	loc = {'name' : l.get_name(), 'country' : l.get_country()}
+	
+	temp_c = w.get_temperature(unit='celsius')
+	temp_f = w.get_temperature(unit='fahrenheit')
+	temperatures = {'C' : temp_c['temp'], 'F' : temp_f['temp']}
+	
+	humidity = w.get_humidity()
+	weather_status = w.get_detailed_status()
+	
+	msg = "Tempo em %s, %s:\n" % (loc['name'], loc['country'])
+	msg += "%s C / %s F.\n" % (temperatures['C'], temperatures['F'])
+	msg += "Humidade: %s%%\n. " % (humidity)
+	msg += "Condicoes: %s.\n" % (weather_status)
+	
+	return msg
+	
+	
 bot = telebot.TeleBot(configs["key"][0])
 
 updating = False #Flag pra quando for updatear
@@ -115,6 +144,9 @@ def handle_messages(message):
 	
 	if command == "user" and message.chat.type != "private" and configs["users"] != ['']:
 		bot.send_message(message.chat.id, obv(random.choice(configs["users"])))
+	
+	if command == "w" or command == "weather":
+		bot.send_message(message.chat.id, get_weather(texto))
 	
 	#Muito cuidado usando isso, pois praticamente tem acesso infinito
 	if command == "eval" and admin_rights:

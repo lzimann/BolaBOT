@@ -10,3 +10,5 @@ admins=
 users=
 #ID do grupo principal que o bot irá atuar(obtenha falando !eval message.chat.id)
 main_group_id=
+#APIKey para o OpenWeatherMap
+weather_api=
