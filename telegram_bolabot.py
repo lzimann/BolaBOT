@@ -48,7 +48,6 @@ if not os.path.isfile("config.ini"):
 f = open("config.ini")
 for line in f.readlines():
 	line = line.strip()
-	print "linha: %s" % line
 	if line and (not line.startswith('#')):
 		config_key = line.split('=')[0]
 		config_value = line.split('=')[1].split(',')
