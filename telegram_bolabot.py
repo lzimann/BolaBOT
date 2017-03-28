@@ -87,9 +87,9 @@ def get_weather(location):
 	weather_status = w.get_detailed_status()
 	
 	msg = "Tempo em %s, %s:\n" % (loc['name'], loc['country'])
-	msg += "%s C / %s F.\n" % (temperatures['C'], temperatures['F'])
-	msg += "Humidade: %s%%\n. " % (humidity)
-	msg += "Condicoes: %s.\n" % (weather_status)
+	msg += "%s C / %s F\n" % (temperatures['C'], temperatures['F'])
+	msg += "Umidade: %s%%\n " % (humidity)
+	msg += "Condicoes: %s" % (weather_status)
 	
 	return msg
 	
