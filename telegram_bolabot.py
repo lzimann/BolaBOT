@@ -9,7 +9,7 @@ import os
 import pyowm
 from hashlib import md5
 
-CONFIG_LIST = "key", "command_strings", "admins", "users", "main_group_id"
+CONFIG_LIST = "key", "command_strings", "admins", "users", "main_group_id", "weather_api"
 #Weather API
 global owm
 parser = argparse.ArgumentParser()
@@ -67,7 +67,7 @@ if configs["key"] == ['']:
 	print "AUTH key não encontrada, por favor insira no config.ini ou por via do comando --key"
 	sys.exit(1)
 
-if configs["weather_api"]:
+if configs["weather_api"] != ['']:
 	owm = pyowm.OWM(configs["weather_api"][0])
 
 def get_weather(location):
@@ -144,7 +144,7 @@ def handle_messages(message):
 	if command == "user" and message.chat.type != "private" and configs["users"] != ['']:
 		bot.send_message(message.chat.id, obv(random.choice(configs["users"])))
 	
-	if command == "w" or command == "weather":
+	if (command == "w" or command == "weather") and configs["weather_api"] != ['']:
 		bot.send_message(message.chat.id, get_weather(texto))
 	
 	#Muito cuidado usando isso, pois praticamente tem acesso infinito
