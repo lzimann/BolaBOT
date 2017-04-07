@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import telebot
+from telebot import types
 import random
 import argparse
 import subprocess
@@ -8,6 +9,10 @@ import sys
 import os
 import pyowm
 from hashlib import md5
+import duel
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 CONFIG_LIST = "key", "command_strings", "admins", "users", "main_group_id", "weather_api"
 #Weather API
@@ -26,7 +31,7 @@ def checksum(file):
 
 def print_verbose(string):
 	if args.verbose:
-		print string
+		print string.encode("utf-8")
 		
 def obv(msg):
     if random.randint(1,4) == 1:
@@ -97,10 +102,11 @@ def get_weather(location):
 bot = telebot.TeleBot(configs["key"][0])
 
 updating = False #Flag pra quando for updatear
+duel_atual = None
 		
 @bot.message_handler(content_types=['text'])
 def handle_messages(message):
-	global updating
+	global updating, duel_atual
 	
 	#Provavelmente redundante por causa do bot.stop_polling(), mas só pra ter certeza
 	if updating:
@@ -112,7 +118,7 @@ def handle_messages(message):
 
 	print_verbose("%s: %s" % (message.from_user.username, message.text))
 	command = None
-	texto = message.text
+	texto = message.text.strip()
 	for string in configs["command_strings"]:
 		if message.text.startswith(string):
 			command = message.text[len(string):].split()[0]
@@ -154,8 +160,26 @@ def handle_messages(message):
 		except Exception as erro:
 			output = "Erro: " + str(erro)
 			
-		bot.send_message(message.chat.id, output)
+		bot.send_message(message.chat.id, output)		
+		
+	if command == "duel" or command == 'd':
+		if duel_atual:
+			if duel_atual.handle_message(message) == "ENDGAME":
+				print 'endgame'
+				duel_atual = None
+		else:
+			if texto:
+				duel_atual = duel.Duelo(bot, message, texto)
+			else:
+				duel_atual = duel.Duelo(bot, message)
 
+@bot.callback_query_handler(func=lambda call: True)
+def callback_handler(call):
+	global duel_atual
+	application = call.data.split(':')[0]
+	if application == "DUEL" and duel_atual:
+		if duel_atual.handle_message(callback_answer = call) == "ENDGAME":
+			duel_atual = None
 
 bot.skip_pending = True
 print_verbose("Iniciando: %s" % sys.argv)

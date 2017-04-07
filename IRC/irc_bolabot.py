@@ -381,7 +381,7 @@ class BotProtocol(IRCClient):
                     if message == 'cancel':
                         if self.roleta_challenger:
                             self.say(channel, 'TR3T@ cancelada.')
-                        self.roleta_clean()                        
+                        self.roleta_clean()
                         
                     if message == 'records':
                         for record in self.records.keys():
